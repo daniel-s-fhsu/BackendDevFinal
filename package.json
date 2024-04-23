@@ -1,0 +1,14 @@
+{
+  "name": "backenddevfinal",
+  "version": "1.0.0",
+  "description": "Final project for backend development",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Seip",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
