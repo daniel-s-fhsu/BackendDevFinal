@@ -57,7 +57,21 @@ const createFunFact = async (req, res) => {
 };
 
 const updateFunFact = async (req, res) => {
+    const state = data.states.find(st => st.code == req.params.state.toUpperCase());
+    if(!state) return res.status(400).json({ "error": "404 Not Found" });
 
+    const { index, funfact } = req.body;
+    if (!index || !funfact) return res.status(400).json({"error" : "index and funfact required"});
+
+    const stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
+    if(!stateDb) return res.status(400).json({"error": "state has no funfact"});
+    if(!stateDb.funFacts[index-1]) return res.status(400).json({"error": "index not found"});
+
+    stateDb.funFacts[index-1] = funfact;
+
+    const result = await stateDb.save();
+
+    return res.json(result);
 };
 
 module.exports = {
