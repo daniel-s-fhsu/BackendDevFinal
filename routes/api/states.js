@@ -9,4 +9,7 @@ router.route('/')
 router.route('/:state')
     .get(statesController.getState);
 
+router.route('/:state/funfact')
+    .post(statesController.createFunFact);
+
 module.exports = router;
