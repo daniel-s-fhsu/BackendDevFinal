@@ -5,13 +5,25 @@ const data = {
     setStates: function (data) { this.states = data }
 };
 
-const getAllStates = (req, res) => {
-    res.json(data.states);
+const getAllStates = async (req, res) => {
+    let states = data.states;
+    states.map(async (state) => {
+        const dbState = await State.findOne({stateCode: state.code});
+        if (dbState) {
+            state.funFacts = dbState.funFacts;
+        }
+    });
+    res.json(states);
 };
 
-const getState = (req, res) => {
-    const state = data.states.find(st => st.code === req.params.state.toUpperCase());
+const getState = async (req, res) => {
+    let state = data.states.find(st => st.code === req.params.state.toUpperCase());
     if(!state) return res.status(400).json({ "error": "404 Not Found"});
+
+    const dbState = await State.findOne({stateCode: req.params.state.toUpperCase()});
+
+    if (dbState) state.funFacts = dbState.funFacts;
+
     res.json(state);
 };
 
@@ -44,8 +56,13 @@ const createFunFact = async (req, res) => {
     }
 };
 
+const updateFunFact = async (req, res) => {
+
+};
+
 module.exports = {
     getAllStates,
     getState,
-    createFunFact
+    createFunFact,
+    updateFunFact
 };
