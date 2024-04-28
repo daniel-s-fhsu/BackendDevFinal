@@ -41,7 +41,9 @@ const getState = async (req, res) => {
         case "FUNFACT":
             if (funfacts) {
                 const funfact = funfacts[Math.floor(Math.random()*funfacts.length)];
-                stateData = {code, funfact};
+                stateData = {funfact};
+            } else {
+                stateData = { "message": "No Fun Facts found for " + state}
             }
             break;
         case "CAPITAL":
