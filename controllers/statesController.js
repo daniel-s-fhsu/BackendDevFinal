@@ -10,7 +10,7 @@ const getAllStates = async (req, res) => {
     await Promise.all(states.map(async (state) => {
         const dbState = await State.findOne({stateCode: state.code});
         if (dbState) {
-            state.funfacts = dbState.funFacts;
+            state.funfacts = dbState.funfacts;
         }
     }));
 
@@ -31,7 +31,7 @@ const getState = async (req, res) => {
 
     const dbState = await State.findOne({stateCode: req.params.state.toUpperCase()});
 
-    if (dbState) stateData.funfacts = dbState.funFacts;
+    if (dbState) stateData.funfacts = dbState.funfacts;
 
     // Filter if filterInfo provided
     if (req.params.filterInfo) {
@@ -80,9 +80,9 @@ const createFunFact = async (req, res) => {
         try {
             const newState = await State.create({
                 stateCode: req.params.state.toUpperCase(),
-                funFacts: funfacts
+                funfacts: funfacts
             });
-            state.funFacts = funfacts;
+            state.funfacts = funfacts;
             res.status(201).json(state);
         } catch (err) {
             console.error(err);
@@ -90,9 +90,10 @@ const createFunFact = async (req, res) => {
     } else {
         // State already exists in mongo, add to existing array
         try {
-            funfacts.forEach((fact) => stateDb.funFacts.push(fact));
+            funfacts.forEach((fact) => stateDb.funfacts.push(fact));
             const result = await stateDb.save();
-            res.json(result);
+            state.funfacts = stateDb.funfacts;
+            res.json(state);
         } catch (err) {
             console.error(err);
         }
@@ -108,9 +109,9 @@ const updateFunFact = async (req, res) => {
 
     const stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
     if(!stateDb) return res.status(400).json({"message": "No Fun Facts found for " + state.state});
-    if(!stateDb.funFacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
+    if(!stateDb.funfacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
 
-    stateDb.funFacts[index-1] = funfact;
+    stateDb.funfacts[index-1] = funfact;
 
     const result = await stateDb.save();
 
@@ -124,11 +125,11 @@ const deleteFunFact = async (req, res) => {
     if (!index) return res.status(400).json({"message" : "State fun fact index value required"});
 
     let stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
-    if(!stateDb || stateDb.funFacts.length == 0) return res.status(400).json({"message": "No Fun Facts found for " + state.state});
-    if(!stateDb.funFacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
+    if(!stateDb || stateDb.funfacts.length == 0) return res.status(400).json({"message": "No Fun Facts found for " + state.state});
+    if(!stateDb.funfacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
 
-    const funFactsAfterDelete = stateDb.funFacts.slice(0, index-1).concat(stateDb.funFacts.slice(index));
-    stateDb.funFacts = funFactsAfterDelete;
+    const funfactsAfterDelete = stateDb.funfacts.slice(0, index-1).concat(stateDb.funfacts.slice(index));
+    stateDb.funfacts = funfactsAfterDelete;
 
     const result = await stateDb.save();
 
