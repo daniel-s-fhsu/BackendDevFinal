@@ -36,7 +36,7 @@ const getState = async (req, res) => {
     // Filter if filterInfo provided
     if (req.params.filterInfo) {
         const filterBy = req.params.filterInfo.toUpperCase();
-        const { code, funfacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
+        const { code, funfacts, state, capital_city: capital, nickname, population: population_int, admission_date: admitted} = stateData;
         switch (filterBy) {
         case "FUNFACT":
             if (funfacts) {
@@ -53,6 +53,7 @@ const getState = async (req, res) => {
             stateData = { state, nickname };
             break;
         case "POPULATION":
+            const population = population_int.toLocaleString();
             stateData = { state, population };
             break;
         case "ADMISSION":
