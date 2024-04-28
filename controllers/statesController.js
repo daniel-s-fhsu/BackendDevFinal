@@ -13,23 +13,56 @@ const getAllStates = async (req, res) => {
             state.funFacts = dbState.funFacts;
         }
     });
+
+    // Checking for contig parameter - if present, will filter array
+    if (req.query.contig) {
+        if (req.query.contig === "true") {
+            states = states.filter((state) => (state.code != 'AK' && state.code != 'HI'));
+        } else if(req.query.contig === "false") {
+            states = states.filter((state) => (state.code == 'AK' || state.code == 'HI'));
+        }
+    }
+
     res.json(states);
 };
 
 const getState = async (req, res) => {
-    let state = data.states.find(st => st.code === req.params.state.toUpperCase());
-    if(!state) return res.status(400).json({ "error": "404 Not Found"});
+    let stateData = data.states.find(st => st.code === req.params.state.toUpperCase());
 
     const dbState = await State.findOne({stateCode: req.params.state.toUpperCase()});
 
-    if (dbState) state.funFacts = dbState.funFacts;
+    if (dbState) stateData.funFacts = dbState.funFacts;
 
-    res.json(state);
+    // Filter if filterInfo provided
+    if (req.params.filterInfo) {
+        const filterBy = req.params.filterInfo.toUpperCase();
+        const { code, funFacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
+        switch (filterBy) {
+        case "FUNFACT":
+            const funFact = funFacts[Math.floor(Math.random()*funFacts.length)];
+            stateData = {code, funFact};
+            break;
+        case "CAPITAL":
+            stateData = {state, capital};
+            break;
+        case "NICKNAME":
+            stateData = { state, nickname };
+            break;
+        case "POPULATION":
+            stateData = { state, population };
+            break;
+        case "ADMISSION":
+            stateData = { state, admitted };
+            break;
+        }
+    }
+
+    res.json(stateData);
 };
 
 const createFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
-    if(!state) return res.status(400).json({ "error": "404 Not Found" });
+
     const { funfacts } = req.body;
 
     if(!funfacts) return res.status(400).json({"error": "funfacts required"});
@@ -62,7 +95,6 @@ const createFunFact = async (req, res) => {
 
 const updateFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
-    if(!state) return res.status(400).json({ "error": "404 Not Found" });
 
     const { index, funfact } = req.body;
     if (!index || !funfact) return res.status(400).json({"error" : "index and funfact required"});
@@ -80,7 +112,6 @@ const updateFunFact = async (req, res) => {
 
 const deleteFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
-    if(!state) return res.status(400).json({ "error": "404 Not Found" });
 
     const { index, funfact } = req.body;
     if (!index) return res.status(400).json({"error" : "index and funfact required"});
