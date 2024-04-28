@@ -5,7 +5,6 @@ const cors = require('cors');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
-const corsOptions = require('./config/corsOptions');
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const PORT = process.env.PORT || 3500;
@@ -14,7 +13,7 @@ const PORT = process.env.PORT || 3500;
 connectDB();
 
 //Setting up for CORS
-app.use(cors(corsOptions));
+app.use(cors());
 
 //Required to open and send json
 app.use(express.json());
