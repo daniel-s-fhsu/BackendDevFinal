@@ -31,7 +31,7 @@ const createFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
     if(!state) return res.status(400).json({ "error": "404 Not Found" });
     const { funfacts } = req.body;
-    console.log(req.body);
+
     if(!funfacts) return res.status(400).json({"error": "funfacts required"});
 
     // Try to get state from mongo
@@ -50,9 +50,13 @@ const createFunFact = async (req, res) => {
         }
     } else {
         // State already exists in mongo, add to existing array
-        funfacts.foreach((fact) => stateDb.funFacts.push(fact));
-        const result = await stateDb.save();
-        res.json(result);
+        try {
+            funfacts.forEach((fact) => stateDb.funFacts.push(fact));
+            const result = await stateDb.save();
+            res.json(result);
+        } catch (err) {
+            console.error(err);
+        }
     }
 };
 
