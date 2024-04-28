@@ -70,7 +70,8 @@ const createFunFact = async (req, res) => {
 
     const { funfacts } = req.body;
 
-    if(!funfacts) return res.status(400).json({"error": "funfacts required"});
+    if(!funfacts) return res.status(400).json({"message": "State fun facts value required"});
+    if(!Array.isArray(funfacts)) return res.status(400).json({"message": "State fun facts value must be an array"})
 
     // Try to get state from mongo
     const stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
@@ -102,11 +103,12 @@ const updateFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
 
     const { index, funfact } = req.body;
-    if (!index || !funfact) return res.status(400).json({"error" : "index and funfact required"});
+    if (!index) return res.status(400).json({"message" : "State fun fact index value required"});
+    if (!funfact) return res.status(400).json({"message": "State fun fact value required"});
 
     const stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
-    if(!stateDb) return res.status(400).json({"error": "state has no funfact"});
-    if(!stateDb.funFacts[index-1]) return res.status(400).json({"error": "index not found"});
+    if(!stateDb) return res.status(400).json({"message": "No Fun Facts found for " + state.state});
+    if(!stateDb.funFacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
 
     stateDb.funFacts[index-1] = funfact;
 
@@ -118,12 +120,12 @@ const updateFunFact = async (req, res) => {
 const deleteFunFact = async (req, res) => {
     const state = data.states.find(st => st.code == req.params.state.toUpperCase());
 
-    const { index, funfact } = req.body;
-    if (!index) return res.status(400).json({"error" : "index and funfact required"});
+    const { index } = req.body;
+    if (!index) return res.status(400).json({"message" : "State fun fact index value required"});
 
     let stateDb = await State.findOne({stateCode: req.params.state.toUpperCase()});
-    if(!stateDb) return res.status(400).json({"error": "state has no funfact"});
-    if(!stateDb.funFacts[index-1]) return res.status(400).json({"error": "index not found"});
+    if(!stateDb || stateDb.funFacts.length == 0) return res.status(400).json({"message": "No Fun Facts found for " + state.state});
+    if(!stateDb.funFacts[index-1]) return res.status(400).json({"message": "No Fun Fact found at that index for " + state.state});
 
     const funFactsAfterDelete = stateDb.funFacts.slice(0, index-1).concat(stateDb.funFacts.slice(index));
     stateDb.funFacts = funFactsAfterDelete;
