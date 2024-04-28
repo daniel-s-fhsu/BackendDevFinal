@@ -7,12 +7,12 @@ const data = {
 
 const getAllStates = async (req, res) => {
     let states = data.states;
-    states.map(async (state) => {
+    await Promise.all(states.map(async (state) => {
         const dbState = await State.findOne({stateCode: state.code});
         if (dbState) {
             state.funfacts = dbState.funFacts;
         }
-    });
+    }));
 
     // Checking for contig parameter - if present, will filter array
     if (req.query.contig) {
@@ -39,7 +39,7 @@ const getState = async (req, res) => {
         const { code, funFacts: funfacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
         switch (filterBy) {
         case "FUNFACT":
-            if (funfact) {
+            if (funfacts) {
                 const funfact = funfacts[Math.floor(Math.random()*funfacts.length)];
                 stateData = {code, funfact};
             }
