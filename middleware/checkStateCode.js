@@ -7,7 +7,7 @@ const checkStateCode = (req, res, next) => {
     let states = data.states;
 
     let state = data.states.find(st => st.code === req.params.state.toUpperCase());
-    if(!state) return res.status(400).json({ "error": "404 Not Found"});
+    if(!state) return res.status(400).json({ "message": "Invalid state abbreviation parameter"});
 
     next();
 };

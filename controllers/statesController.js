@@ -10,7 +10,7 @@ const getAllStates = async (req, res) => {
     states.map(async (state) => {
         const dbState = await State.findOne({stateCode: state.code});
         if (dbState) {
-            state.funFacts = dbState.funFacts;
+            state.funfacts = dbState.funFacts;
         }
     });
 
@@ -31,16 +31,16 @@ const getState = async (req, res) => {
 
     const dbState = await State.findOne({stateCode: req.params.state.toUpperCase()});
 
-    if (dbState) stateData.funFacts = dbState.funFacts;
+    if (dbState) stateData.funfacts = dbState.funFacts;
 
     // Filter if filterInfo provided
     if (req.params.filterInfo) {
         const filterBy = req.params.filterInfo.toUpperCase();
-        const { code, funFacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
+        const { code, funFacts: funfacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
         switch (filterBy) {
         case "FUNFACT":
-            const funFact = funFacts[Math.floor(Math.random()*funFacts.length)];
-            stateData = {code, funFact};
+            const funfact = funfacts[Math.floor(Math.random()*funfacts.length)];
+            stateData = {code, funfact};
             break;
         case "CAPITAL":
             stateData = {state, capital};
