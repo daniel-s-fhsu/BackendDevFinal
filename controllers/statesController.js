@@ -92,8 +92,7 @@ const createFunFact = async (req, res) => {
         try {
             funfacts.forEach((fact) => stateDb.funfacts.push(fact));
             const result = await stateDb.save();
-            state.funfacts = stateDb.funfacts;
-            res.json(state);
+            res.json(result);
         } catch (err) {
             console.error(err);
         }
