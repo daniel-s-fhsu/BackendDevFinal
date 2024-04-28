@@ -39,8 +39,10 @@ const getState = async (req, res) => {
         const { code, funFacts: funfacts, state, capital_city: capital, nickname, population, admission_date: admitted} = stateData;
         switch (filterBy) {
         case "FUNFACT":
-            const funfact = funfacts[Math.floor(Math.random()*funfacts.length)];
-            stateData = {code, funfact};
+            if (funfact) {
+                const funfact = funfacts[Math.floor(Math.random()*funfacts.length)];
+                stateData = {code, funfact};
+            }
             break;
         case "CAPITAL":
             stateData = {state, capital};
